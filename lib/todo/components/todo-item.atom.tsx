@@ -1,55 +1,67 @@
+import React from 'react';
 import CheckBox from '@react-native-community/checkbox';
-import React, {useState} from 'react';
-import {Button, Text, View, ViewStyle} from 'react-native';
+import {Button, StyleSheet, Text, TextStyle, View} from 'react-native';
 
 interface TodoItemAtomProps {
-  value: boolean;
+  completed: boolean;
   contents: string;
-  onChanged: (status: boolean) => void;
-  onDelete: () => void;
-}
-
-interface TodoItemAtomState {
-  checked: boolean;
+  onChanged?: (status: boolean) => void;
+  onDelete?: () => void;
 }
 
 export function TodoItemAtom({
-  value = false,
+  completed = false,
   contents,
   onChanged,
   onDelete,
 }: TodoItemAtomProps) {
-  const [state, setState] = useState<TodoItemAtomState>({checked: value});
+  const getContentsStyle = (): TextStyle => {
+    return {
+      fontSize: 16,
+      textDecorationLine: completed ? 'line-through' : 'none',
+      color: completed ? 'lightgrey' : 'black',
+    };
+  };
 
-  const viewStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 11,
+  const onValueChange = (newValue: boolean) => {
+    if (onChanged) {
+      onChanged(newValue);
+    }
   };
 
   return (
-    <View style={viewStyle}>
+    <View style={styles.container}>
       <CheckBox
         boxType="square"
-        style={{width: 20, height: 20}}
+        style={styles.checkBox}
         animationDuration={0.3}
-        onValueChange={value => {
-          setState({checked: value});
-          onChanged(value);
-        }}
-        value={state.checked}
+        onValueChange={onValueChange}
+        value={completed}
       />
-      <View style={{width: 10}}></View>
-      <Text
-        style={{
-          fontSize: 16,
-          flexGrow: 1,
-          textDecorationLine: state.checked ? 'line-through' : 'none',
-          color: state.checked ? 'lightgrey' : 'black',
-        }}>
-        {contents}
-      </Text>
-      <Button title="삭제하기" onPress={onDelete} />
+      <View style={styles.spacing} />
+      <View style={styles.textArea}>
+        <Text style={getContentsStyle()}>{contents}</Text>
+      </View>
+      <Button title="×" onPress={onDelete} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 11,
+  },
+  checkBox: {
+    width: 20,
+    height: 20,
+  },
+  spacing: {
+    width: 10,
+  },
+  textArea: {
+    flex: 1,
+  },
+});

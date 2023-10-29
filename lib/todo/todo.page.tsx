@@ -1,64 +1,77 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, View, ViewStyle} from 'react-native';
+import React, {useEffect} from 'react';
+import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {TodoItemAtom} from './components/todo-item.atom';
-import {Todo} from '../domain/todo';
 import {AddTodoInputMolecule} from './components/add-todo-input.molecule';
-
-let sequence = 2;
-
-interface TodoPageState {
-  todos: Todo[];
-}
+import {useAppDispatch, useAppSelector} from '../hooks';
+import {
+  createTodo,
+  deleteTodo,
+  getTodos,
+  modifyTodo,
+} from './reducers/todos.slice';
 
 export function TodoPage() {
-  const [state, setState] = useState<TodoPageState>({
-    todos: [
-      
-    ],
-  });
-
-  const viewStyle: ViewStyle = {
-    paddingHorizontal: 20,
-  };
+  const todoState = useAppSelector(state => state.todosReducer);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log(state);
-  }, [state]);
+    dispatch(getTodos());
+  }, []);
 
   return (
     <SafeAreaView>
-      <View style={viewStyle}>
-        <Text style={{fontSize: 32, fontWeight: '700'}}>TODOTEE</Text>
-        <View style={{height: 10}}></View>
+      <View style={styles.view}>
+        <View style={styles.titleSpacing}>
+          <Text style={styles.titleText}>TODOTEE</Text>
+        </View>
         <AddTodoInputMolecule
-          onPressed={contents => {
-            const newState = {todos: [...state.todos]};
-            newState.todos.push({
-              id: ++sequence,
-              contents,
-              checked: false,
-            });
-            setState(newState);
+          onPressed={title => {
+            dispatch(createTodo(title));
           }}
         />
-        {state.todos.map((todo, index) => (
-          <TodoItemAtom
-            key={`todo-item-${index}`}
-            value={todo.checked}
-            contents={todo.contents}
-            onChanged={status => {
-              const newState = {todos: [...state.todos]};
-              newState.todos[index].checked = status;
-              setState(newState);
-            }}
-            onDelete={() => {
-              const newState = {todos: [...state.todos]};
-              newState.todos.splice(index, 1);
-              setState(newState);
-            }}
-          />
-        ))}
+        {!todoState.loading &&
+          (todoState.error ? (
+            <View>
+              <Text>오류가 발생하였습니다.</Text>
+              <Button
+                onPress={() => dispatch(getTodos())}
+                title="다시 불러오기"
+              />
+            </View>
+          ) : (
+            todoState.todoList.map((todo, index) => (
+              <TodoItemAtom
+                key={`todo-item-${index}`}
+                completed={todo.completed}
+                contents={todo.title}
+                onChanged={completed => {
+                  dispatch(
+                    modifyTodo({
+                      id: todo.id,
+                      body: {title: todo.title, completed},
+                    }),
+                  );
+                }}
+                onDelete={() => {
+                  dispatch(deleteTodo({id: todo.id}));
+                }}
+              />
+            ))
+          ))}
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  view: {
+    paddingHorizontal: 20,
+  },
+  titleText: {
+    fontSize: 32,
+    fontWeight: '700',
+  },
+  titleSpacing: {
+    paddingBottom: 10,
+  },
+});
