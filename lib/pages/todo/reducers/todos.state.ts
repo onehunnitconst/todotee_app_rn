@@ -1,5 +1,5 @@
 import {WritableDraft} from 'immer/dist/internal';
-import {TodoResponseDto} from '../../dto/todo-response.dto';
+import {TodoResponseDto} from '../../../dto/todo-response.dto';
 
 export interface TodosState {
   readonly loading: boolean;

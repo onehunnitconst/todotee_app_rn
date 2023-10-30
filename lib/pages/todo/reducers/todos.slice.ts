@@ -9,9 +9,9 @@ import {
   setErrorState,
   setLoadingState,
 } from './todos.state';
-import {TodoRequestDto} from '../../dto/todo-request.dto';
-import {TodoApi} from '../../api/todo.api';
-import {client} from '../../api/client';
+import {TodoRequestDto} from '../../../dto/todo-request.dto';
+import {TodoApi} from '../../../api/todo.api';
+import {client} from '../../../api/client';
 
 const api = new TodoApi(client);
 

@@ -2,13 +2,16 @@ import React, {useEffect} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {TodoItemAtom} from './components/todo-item.atom';
 import {AddTodoInputMolecule} from './components/add-todo-input.molecule';
-import {useAppDispatch, useAppSelector} from '../hooks';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {
   createTodo,
   deleteTodo,
   getTodos,
   modifyTodo,
 } from './reducers/todos.slice';
+import {HeaderMolecule} from '../../common/header.molecule';
+
+export const TodoPageRouteName = '/todos';
 
 export function TodoPage() {
   const todoState = useAppSelector(state => state.todosReducer);
@@ -20,10 +23,8 @@ export function TodoPage() {
 
   return (
     <SafeAreaView>
+      <HeaderMolecule menu="TODOS" />
       <View style={styles.view}>
-        <View style={styles.titleSpacing}>
-          <Text style={styles.titleText}>TODOTEE</Text>
-        </View>
         <AddTodoInputMolecule
           onPressed={title => {
             dispatch(createTodo(title));
