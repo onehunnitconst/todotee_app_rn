@@ -6,7 +6,6 @@ import {
   MemoDetailPage,
   MemoDetailPageRouteName,
 } from './pages/memo-detail/memo-detail.page';
-import {Text} from 'react-native';
 
 export type RootStackParamList = {
   [MainPageRouteName]: undefined;
@@ -30,6 +29,8 @@ function Navigator() {
           name={MemoDetailPageRouteName}
           component={MemoDetailPage}
           options={{
+            headerBackTitleVisible: false,
+            headerTitle: '메모',
             // headerShown: false,
           }}
         />

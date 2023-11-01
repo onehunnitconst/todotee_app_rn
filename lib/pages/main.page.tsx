@@ -23,7 +23,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 function MainPage() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={({route}) => ({})}>
       <Tab.Screen
         name={TodoPageRouteName}
         component={TodoPage}
